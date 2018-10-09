@@ -4,11 +4,10 @@
       <h3>{{sport.name}}</h3>
       <van-cell-group>
         <van-switch-cell v-for="({dept,name},idx) of teamList[teamId].users" :key="idx" v-model="checked[idx]" :title="`${idx+1}.${name}(${dept})`" />
-
       </van-cell-group>
       <div class="action">
-        <van-button type="primary" style="width:100px;">提交</van-button>
-        <van-button style="width:100px;">重置</van-button>
+        <van-button type="primary">提交</van-button>
+        <van-button>重置</van-button>
       </div>
     </div>
     <footer-component />
@@ -65,11 +64,18 @@ export default {
       font-weight: lighter;
       font-size: 1.5rem;
     }
+    .van-cell {
+      margin: 3px 0;
+      border-bottom: 1px solid #eee;
+    }
     .action {
       width: 100%;
       display: flex;
       justify-content: space-around;
       margin: 20px 0;
+      button {
+        width: 100px;
+      }
     }
   }
 }
