@@ -1,2 +1,16 @@
 # kpi_2018_party
-季度优秀
+
+## Project setup
+```
+npm install
+```
+
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
+
+### Compiles and minifies for production
+```
+npm run build
+```
