@@ -4,7 +4,7 @@ const state = {
   sport: {
     id: 1,
     isLogin: true,
-    name: '党支部推优',
+    name: '党支部先进评选',
     loadWXInfo: true
   },
   cdnUrl: '//api.cbpc.ltd/',

@@ -287,7 +287,7 @@ export default {
 @import './assets/animate.less';
 
 body {
-  background-color: #fff;
+  background-color: #f2f2f2;
   padding: 0;
   margin: 0;
   -webkit-font-smoothing: antialiased;
