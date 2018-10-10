@@ -182,7 +182,7 @@ export default {
           title: this.sport.name,
           desc: this.sport.name,
           link: this.shareUrl,
-          imgUrl: "https://www.cbpc.ltd/public/cdn/cbc.jpg",
+          imgUrl: "http://www.cbpc.ltd/public/cdn/cbpc.jpg",
           type: "",
           dataUrl: "",
           success: function() {},
