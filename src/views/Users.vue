@@ -24,11 +24,12 @@ import { mapState, mapMutations } from "vuex";
 import dayjs from 'dayjs';
 import FooterComponent from '@/components/FooterComponent';
 import teamList from '@/util/teamList';
-import { Cell,CellGroup,Button,RadioGroup,Radio } from 'vant';
+import { Cell,CellGroup,Button,RadioGroup,Radio,Toast } from 'vant';
 import 'vant/lib/vant-css/base.css';
 import 'vant/lib/vant-css/cell.css';
 import 'vant/lib/vant-css/radio.css';
 import 'vant/lib/vant-css/button.css';
+import 'vant/lib/vant-css/toast.css';
 import * as db from '@/util/db';
 
 export default {
@@ -62,6 +63,22 @@ export default {
   },
   methods: {
     ...mapMutations(["setStore"]),
+    loadAnswerStatus:async function(){
+      let rec_month  = dayjs().format('YYYY-MM'); 
+      let {openid} = this.userInfo;
+      
+      if('undefined' === typeof openid){
+        return;
+      }
+      let {id:sid} = this.sport;
+      let {data:[{team_name}]} = await db.getCbpcPrintPartyKpiVoted({
+        rec_month, sid, openid
+      })
+      if(team_name){
+        let teamId = teamList.findIndex(({name})=>name===team_name);
+        this.$router.push('/result/'+teamId);
+      }
+    },
     submit:async function(){
       let rec_month  = dayjs().format('YYYY-MM'); 
 
@@ -87,7 +104,10 @@ export default {
   },
   beforeMount(){
     this.teamId = this.$route.params.idx;
-  }
+  },
+  mounted(){
+    this.loadAnswerStatus()
+  } 
 }
 </script>
 <style lang="less" scoped>

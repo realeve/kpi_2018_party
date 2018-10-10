@@ -26,3 +26,14 @@ export const getCbpcPrintPartyKpi = async params =>
     url: '/103/e55382eada.json',
     params
   }).then(res => res);
+
+/**
+*   @database: { 微信开发 }
+*   @desc:     { 已投票 } 
+    const { rec_month, sid, openid } = params;
+*/
+export const getCbpcPrintPartyKpiVoted = async params =>
+  await axios({
+    url: '/104/8dc89dda94.json',
+    params
+  }).then(res => res);

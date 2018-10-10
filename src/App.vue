@@ -13,7 +13,10 @@ import wx from "weixin-js-sdk";
 import * as db from "./util/db";
 import { axios } from "./util/axios";
 import { Toast } from "vant";
-import lib from "./util/index";
+import 'vant/lib/vant-css/toast.css';
+import lib from "./util/index"; 
+import dayjs from 'dayjs';
+import teamList from '@/util/teamList'; 
 
 export default {
   data() {
@@ -67,6 +70,7 @@ export default {
     showApp(val) {
       if (val) {
         Toast.clear();
+        this.loadAnswerStatus();
       }
     }
   },
@@ -224,7 +228,23 @@ export default {
         };
         localStorage.setItem(this._KEY.weixin, JSON.stringify(this.userInfo));
       }, 3000);
-    } 
+    },
+    loadAnswerStatus:async function(){
+      let rec_month  = dayjs().format('YYYY-MM'); 
+      let {openid} = this.userInfo;
+      
+      if('undefined' === typeof openid){
+        return;
+      }
+      let {id:sid} = this.sport;
+      let {data:[{team_name}]} = await db.getCbpcPrintPartyKpiVoted({
+        rec_month, sid, openid
+      })
+      if(team_name){
+        let teamId = teamList.findIndex(({name})=>name===team_name);
+        this.$router.push('/result/'+teamId);
+      }
+    },
   },
   created: async function() {
     if (window.location.href.indexOf("#/setting") > 0) {
@@ -249,6 +269,9 @@ export default {
 
     // 正式环境微信载入
     this.wxInit();
+  },
+  mounted(){
+    this.loadAnswerStatus();
   }
 };
 </script>

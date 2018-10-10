@@ -48,6 +48,9 @@ export default {
   },
   beforeMount(){
     this.teamId = this.$route.params.idx;
+  },
+  mounted(){
+    this.loadDefault()
   }
 }
 </script>

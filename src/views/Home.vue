@@ -17,6 +17,7 @@ import { mapState, mapMutations } from "vuex";
 import dayjs from 'dayjs';
 import FooterComponent from '@/components/FooterComponent';
 import teamList from '@/util/teamList'
+import * as db from '@/util/db';
 export default {
   name: 'home',
   components:{FooterComponent},
@@ -35,8 +36,27 @@ export default {
     ...mapMutations(["setStore"]),
     enter(key){
       this.$router.push(`/users/${key}`);
-    }
-  }
+    } ,
+    loadAnswerStatus:async function(){
+      let rec_month  = dayjs().format('YYYY-MM'); 
+      let {openid} = this.userInfo;
+      
+      if('undefined' === typeof openid){
+        return;
+      }
+      let {id:sid} = this.sport;
+      let {data:[{team_name}]} = await db.getCbpcPrintPartyKpiVoted({
+        rec_month, sid, openid
+      })
+      if(team_name){
+        let teamId = teamList.findIndex(({name})=>name===team_name);
+        this.$router.push('/result/'+teamId);
+      }
+    },
+  },
+  mounted(){
+    this.loadAnswerStatus()
+  } 
 }
 </script>
 <style lang="less" scoped>
