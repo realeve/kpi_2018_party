@@ -1,8 +1,7 @@
 export default [
   {
     key: 'manage',
-    name: '管理党小组',
-    total: 5,
+    name: '管理党小组', 
     users: [
       {
         dept: '公司领导',

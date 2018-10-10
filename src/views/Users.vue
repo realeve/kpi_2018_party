@@ -2,12 +2,17 @@
   <div class="home">
     <div class="container">
       <h3>{{sport.name}}</h3>
-      <van-cell-group>
-        <van-switch-cell v-for="({dept,name},idx) of teamList[teamId].users" :key="idx" v-model="checked[idx]" :title="`${idx+1}.${name}(${dept})`" />
-      </van-cell-group>
-      <div class="action">
-        <van-button type="primary">提交</van-button>
-        <van-button>重置</van-button>
+      <van-radio-group v-model="radio">
+        <van-cell-group>
+          <van-cell v-for="({dept,name},idx) of users" :key="idx" :title="`${idx+1}.${name}(${dept})`" @click="radio = idx">
+            <van-radio :name="idx" />
+          </van-cell>
+        </van-cell-group>
+      </van-radio-group>
+
+      <div class="action" v-show="radio>-1">
+        <van-button type="primary" @click="submit">提交</van-button>
+        <van-button @click="radio=-1">重置</van-button>
       </div>
     </div>
     <footer-component />
@@ -19,31 +24,56 @@ import { mapState, mapMutations } from "vuex";
 import dayjs from 'dayjs';
 import FooterComponent from '@/components/FooterComponent';
 import teamList from '@/util/teamList';
-import { SwitchCell,CellGroup,Button } from 'vant';
+import { Cell,CellGroup,Button,RadioGroup,Radio } from 'vant';
 import 'vant/lib/vant-css/base.css';
 import 'vant/lib/vant-css/cell.css';
-import 'vant/lib/vant-css/switch-cell.css';
-import 'vant/lib/vant-css/switch.css';
+import 'vant/lib/vant-css/radio.css';
 import 'vant/lib/vant-css/button.css';
 
 export default {
   name: 'home',
-  components:{FooterComponent,VanButton:Button,VanSwitchCell:SwitchCell,VanCellGroup:CellGroup},
+  components:{FooterComponent,VanButton:Button,VanCellGroup:CellGroup,VanCell:Cell,VanRadio:Radio,VanRadioGroup:RadioGroup},
   data(){
     return{
       teamList,
-      checked:[],
-      teamId:0
+      radio:-1,
+      teamId:-1
     }
   },
   computed: {
     ...mapState(["userInfo", "sport"]),
-    
+    users(){
+      return this.teamId>-1?this.teamList[this.teamId].users:[];
+    },
+    curUser(){
+      let empty = {
+        dept:'',
+        name:''
+      };
+      if(this.users.length===0 || this.radio===-1){
+        return empty
+      }
+      return this.users[this.radio]||empty;
+    },
+    curTeamName(){
+      return this.teamId>-1?this.teamList[this.teamId].name:'';
+    }
   },
   methods: {
     ...mapMutations(["setStore"]),
-    enter(key){
-      console.log(key)
+    submit(){
+      let {openid,nickname,headimgurl} = this.userInfo
+      let params={
+        username:this.curUser.name,
+        dept:this.curUser.dept,
+        team_name:this.curTeamName,
+        sid:this.sport.id,
+        curMonth:dayjs().format('YYYY-MM'),
+        openid,
+        nickname,
+        headimgurl
+      }
+      console.log(params);
     }
   },
   beforeMount(){

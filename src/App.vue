@@ -21,8 +21,7 @@ export default {
       transitionName: "slide-left",
       code: "",
       apiId: "wx762c9153df774440",
-      isAnswered: false,
-      prize_id: 0
+      isAnswered: false 
     };
   },
   computed: {
@@ -52,20 +51,12 @@ export default {
       // return window.location.href.split("#")[0].split("?")[0];
       let { origin, pathname } = window.location;
       return origin + pathname;
-    },
-    webp() {
-      return window.__WEBP;
-    },
+    }, 
     showApp() {
       return typeof this.userInfo.openid != "undefined";
     }
   },
   watch: {
-    webp(_WEBP) {
-      if (_WEBP) {
-        this.$store.commit("setStore", { _WEBP });
-      }
-    },
     $route(to, from) {
       if (to.path == "/") {
         this.transitionName = "slide-right";
@@ -76,11 +67,6 @@ export default {
     showApp(val) {
       if (val) {
         Toast.clear();
-      }
-    },
-    userInfo({ openid }) {
-      if (typeof openid != "undefined") {
-        // this.isVoted(openid);
       }
     }
   },
@@ -238,15 +224,7 @@ export default {
         };
         localStorage.setItem(this._KEY.weixin, JSON.stringify(this.userInfo));
       }, 3000);
-    },
-    // 在载入用户身份前截断后续逻辑
-    loadLastStatus() {
-      let status = window.localStorage.getItem(this._KEY.paper);
-      if (status == null) {
-        return false;
-      }
-      return true;
-    }
+    } 
   },
   created: async function() {
     if (window.location.href.indexOf("#/setting") > 0) {
@@ -254,15 +232,7 @@ export default {
       return false;
     }
     this.wxPermissionInit();
-
-    // 是否已经参与答题
-    if (this.loadLastStatus()) {
-      this.isAnswered = true;
-      if (this.prize_id == 0) {
-        return;
-      }
-    }
-
+    
     Toast.loading({
       duration: 0, // 持续展示 toast
       forbidClick: true, // 禁用背景点击
