@@ -17,6 +17,11 @@ export default new Router({
       path: '/users/:idx',
       name: 'users',
       component: () => import('./views/Users.vue')
+    },
+    {
+      path: '/result/:idx',
+      name: 'result',
+      component: () => import('./views/Result.vue')
     }
   ]
 });
