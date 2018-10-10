@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <transition v-if="showApp || isAnswered" :name="transitionName">
+    <!-- v-if="showApp || isAnswered" -->
+    <transition :name="transitionName">
       <router-view class="app-container" />
     </transition>
   </div>
@@ -14,9 +15,7 @@ import * as db from "./util/db";
 import { axios } from "./util/axios";
 import { Toast } from "vant";
 import 'vant/lib/vant-css/toast.css';
-import lib from "./util/index"; 
-import dayjs from 'dayjs';
-import teamList from '@/util/teamList'; 
+import lib from "./util/index";  
 
 export default {
   data() {
@@ -68,18 +67,24 @@ export default {
       }
     },
     showApp(val) {
+      console.log('showApp')
       if (val) {
-        Toast.clear();
-        this.loadAnswerStatus();
+        Toast.clear(); 
       }
-    }
+    } 
   },
   methods: {
     ...mapMutations(["setStore"]), 
     wxInit() {
       if (!this.needRedirect()) {
+        Toast.loading({
+          duration: 0, // 持续展示 toast
+          forbidClick: true, // 禁用背景点击
+          loadingType: "spinner",
+          message: "载入个人信息"
+        });
         this.getWXUserInfo();
-      }
+      } 
     },
     needRedirect() {
       if (window.location.href.indexOf("#/setting") > 0) {
@@ -105,7 +110,7 @@ export default {
     getWXUserInfo() {
       let userInfo;
       let wx_userinfo = localStorage.getItem(this._KEY.weixin);
-
+      
       // localStorage内容需更新
       if (
         null == wx_userinfo ||
@@ -116,17 +121,10 @@ export default {
         this.getWXInfo();
         return;
       }
-
-      // 时长校验
-      let timeStamp = lib.getTimestamp();
-      let needRefresh = timestamp - wx_userinfo.timeStamp > 1800;
-      if (needRefresh) {
-        this.getWXInfo();
-        return;
-      }
-
+      
       userInfo = JSON.parse(wx_userinfo);
       this.userInfo = userInfo;
+      Toast.clear();
     },
     getWXInfo() {
       axios({
@@ -144,6 +142,7 @@ export default {
         if (typeof data.nickname != "undefined") {
           localStorage.setItem(this._KEY.weixin, JSON.stringify(data));
         }
+        Toast.clear();
       });
     },
     wxPermissionInit() {
@@ -228,50 +227,28 @@ export default {
         };
         localStorage.setItem(this._KEY.weixin, JSON.stringify(this.userInfo));
       }, 3000);
-    },
-    loadAnswerStatus:async function(){
-      let rec_month  = dayjs().format('YYYY-MM'); 
-      let {openid} = this.userInfo;
-      
-      if('undefined' === typeof openid){
-        return;
-      }
-      let {id:sid} = this.sport;
-      let {data:[{team_name}]} = await db.getCbpcPrintPartyKpiVoted({
-        rec_month, sid, openid
-      })
-      if(team_name){
-        let teamId = teamList.findIndex(({name})=>name===team_name);
-        this.$router.push('/result/'+teamId);
-      }
-    },
+    }, 
   },
   created: async function() {
     if (window.location.href.indexOf("#/setting") > 0) {
       this.isAnswered = true;
       return false;
     }
-    this.wxPermissionInit();
     
-    Toast.loading({
-      duration: 0, // 持续展示 toast
-      forbidClick: true, // 禁用背景点击
-      loadingType: "spinner",
-      message: "载入个人信息"
-    });
-
     // 开发模式下，初始化值
     if (process.env.NODE_ENV == "development") {
       // 模拟登录
       this.simulateUserInfo();
       return;
+    }else{
+      this.wxPermissionInit();
     }
 
     // 正式环境微信载入
     this.wxInit();
   },
   mounted(){
-    this.loadAnswerStatus();
+    document.title = this.sport.name; 
   }
 };
 </script>

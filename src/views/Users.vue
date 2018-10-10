@@ -71,10 +71,10 @@ export default {
         return;
       }
       let {id:sid} = this.sport;
-      let {data:[{team_name}]} = await db.getCbpcPrintPartyKpiVoted({
+      let {data} = await db.getCbpcPrintPartyKpiVoted({
         rec_month, sid, openid
       })
-      if(team_name){
+      if(data.length&&data[0].team_name){
         let teamId = teamList.findIndex(({name})=>name===team_name);
         this.$router.push('/result/'+teamId);
       }

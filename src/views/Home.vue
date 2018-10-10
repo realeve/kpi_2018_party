@@ -1,6 +1,7 @@
 <template>
   <div class="home">
     <div class="container">
+      this is home
       <h3>{{sport.name}} <small>{{curMonth}}</small></h3>
       <ul>
         <li v-for="({key,name},idx) of teamList" :key="key" @click="enter(idx)">
@@ -45,16 +46,17 @@ export default {
         return;
       }
       let {id:sid} = this.sport;
-      let {data:[{team_name}]} = await db.getCbpcPrintPartyKpiVoted({
+      let {data} = await db.getCbpcPrintPartyKpiVoted({
         rec_month, sid, openid
       })
-      if(team_name){
+      if(data.length&&data[0].team_name){
         let teamId = teamList.findIndex(({name})=>name===team_name);
         this.$router.push('/result/'+teamId);
       }
     },
   },
   mounted(){
+    console.log('mounted home')
     this.loadAnswerStatus()
   } 
 }
