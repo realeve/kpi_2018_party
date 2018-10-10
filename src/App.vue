@@ -1,7 +1,6 @@
 <template>
   <div id="app">
-    <!-- v-if="showApp || isAnswered" -->
-    <transition :name="transitionName">
+    <transition v-if="showApp || isAnswered" :name="transitionName">
       <router-view class="app-container" />
     </transition>
   </div>
