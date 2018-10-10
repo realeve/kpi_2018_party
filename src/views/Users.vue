@@ -29,6 +29,7 @@ import 'vant/lib/vant-css/base.css';
 import 'vant/lib/vant-css/cell.css';
 import 'vant/lib/vant-css/radio.css';
 import 'vant/lib/vant-css/button.css';
+import * as db from '@/util/db';
 
 export default {
   name: 'home',
@@ -61,19 +62,27 @@ export default {
   },
   methods: {
     ...mapMutations(["setStore"]),
-    submit(){
+    submit:async function(){
+      let rec_month  = dayjs().format('YYYY-MM'); 
+
       let {openid,nickname,headimgurl} = this.userInfo
       let params={
         username:this.curUser.name,
         dept:this.curUser.dept,
         team_name:this.curTeamName,
         sid:this.sport.id,
-        curMonth:dayjs().format('YYYY-MM'),
+        rec_month,
         openid,
         nickname,
-        headimgurl
+        headimgurl,
+        rec_time:dayjs().format('YYYY-MM-DD HH:mm:SS')
       }
-      console.log(params);
+      let {data:[{affected_rows}]}=await db.addCbpcPrintPartyKpi(params);
+      if(affected_rows<1){
+        Toast.fail('提交失败');
+      }else{
+        this.$router.push('/result/'+this.teamId);
+      }
     }
   },
   beforeMount(){

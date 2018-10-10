@@ -3,9 +3,9 @@
     <div class="container">
       <h3>{{sport.name}}投票结果</h3>
       <ul>
-        <li v-for="({dept,name},idx) of users" :key="idx">
-          <span>{{idx+1}}.{{name}}({{dept}})</span>
-          <span>x 票</span>
+        <li v-for="({dept,username,tickets},idx) of users" :key="idx">
+          <span>{{idx+1}}.{{username}}({{dept}})</span>
+          <span>{{tickets}} 票</span>
         </li>
       </ul>
     </div>
@@ -18,25 +18,32 @@ import { mapState, mapMutations } from "vuex";
 import dayjs from 'dayjs';
 import FooterComponent from '@/components/FooterComponent';
 import teamList from '@/util/teamList'; 
+import * as db from '@/util/db';
+
 export default {
   name: 'home', 
   components:{FooterComponent},
   data(){
     return{
       teamList,
-      teamId:-1
+      teamId:-1,
+      users:[]
     }
   },
   computed: {
     ...mapState(["userInfo", "sport"]),
-    users(){
-      return this.teamId>-1?this.teamList[this.teamId].users:[];
-    },
+    teamName(){
+      return this.teamId>-1?this.teamList[this.teamId].name:'';
+    }
   },
   methods: {
     ...mapMutations(["setStore"]),
-    loadDefault(){
-      
+    loadDefault:async function(){
+      let rec_month  = dayjs().format('YYYY-MM'); 
+      let {data} = await db.getCbpcPrintPartyKpi({
+         rec_month, sid:this.sport.id
+      });
+      this.users = data.filter(item=>item.team_name === this.teamName);
     }
   },
   beforeMount(){
