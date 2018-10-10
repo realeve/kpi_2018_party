@@ -1,7 +1,6 @@
 <template>
   <div class="home">
     <div class="container">
-      this is home
       <h3>{{sport.name}} <small>{{curMonth}}</small></h3>
       <ul>
         <li v-for="({key,name},idx) of teamList" :key="key" @click="enter(idx)">
